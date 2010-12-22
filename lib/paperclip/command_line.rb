@@ -7,6 +7,7 @@ module Paperclip
     def initialize(binary, params = "", options = {})
       @binary            = binary.dup
       @params            = params.dup
+      @thread_limit      = Paperclip.options[:thread_limit]
       @options           = options.dup
       @swallow_stderr    = @options.has_key?(:swallow_stderr) ? @options.delete(:swallow_stderr) : Paperclip.options[:swallow_stderr]
       @expected_outcodes = @options.delete(:expected_outcodes)
@@ -16,6 +17,7 @@ module Paperclip
     def command
       cmd = []
       cmd << full_path(@binary)
+      cmd << "-limit thread #{@thread_limit}" if @thread_limit
       cmd << interpolate(@params, @options)
       cmd << bit_bucket if @swallow_stderr
       cmd.join(" ")
